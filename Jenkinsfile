@@ -3,30 +3,34 @@ pipeline {
 
     environment {
         TAG_NAME = "build-v1.0.${BUILD_NUMBER}"
-        GITHUB_CREDENTIALS = credentials('github-creds')
-        GITHUB_REPO = "https://${GITHUB_CREDENTIALS_USR}:${GITHUB_CREDENTIALS_PSW}@github.com/saurabh11122001/aws-test.git"
     }
 
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'main', url: 'https://github.com/saurabh11122001/aws-test.git', credentialsId: 'github-creds'
+                git branch: 'main',
+                    url: 'https://github.com/saurabh11122001/aws-test.git',
+                    credentialsId: 'github-creds'
             }
         }
 
-        stage('Create Tag') {
+        stage('Create Tag & Push') {
             steps {
-                sh "git config user.name 'ci-bot'"
-                sh "git config user.email 'ci-bot@example.com'"
-                sh "git tag ${TAG_NAME}"
-                sh "git push ${GITHUB_REPO} ${TAG_NAME}"
+                withCredentials([usernamePassword(credentialsId: 'github-creds', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
+                    sh '''
+                        git config user.name "ci-bot"
+                        git config user.email "ci-bot@example.com"
+                        git tag $TAG_NAME
+                        git push https://$USERNAME:$PASSWORD@github.com/saurabh11122001/aws-test.git $TAG_NAME
+                    '''
+                }
             }
         }
     }
 
     post {
         success {
-            echo "Tag ${TAG_NAME} created and pushed!"
+            echo "✅ Tag $TAG_NAME created and pushed to GitHub!"
         }
     }
 }
