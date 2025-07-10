@@ -3,6 +3,7 @@ pipeline {
 
     environment {
         TAG_NAME = "build-v1.0.${BUILD_NUMBER}"
+        GIT_REPO = "github.com/saurabh11122001/aws-test.git"
     }
 
     stages {
@@ -16,19 +17,12 @@ pipeline {
 
         stage('Create Tag & Push') {
             steps {
-                withCredentials([
-                    usernamePassword(
-                        credentialsId: 'github-creds',
-                        usernameVariable: 'USERNAME',
-                        passwordVariable: 'PASSWORD'
-                    )
-                ]) {
+                withCredentials([string(credentialsId: 'github-token', variable: 'TOKEN')]) {
                     sh """
                         git config user.name "ci-bot"
                         git config user.email "ci-bot@example.com"
                         git tag $TAG_NAME
-                        git remote set-url origin https://$USERNAME:$PASSWORD@github.com/saurabh11122001/aws-test.git
-                        git push origin $TAG_NAME
+                        git push https://ci-bot:$TOKEN@$GIT_REPO $TAG_NAME
                     """
                 }
             }
