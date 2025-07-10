@@ -3,14 +3,14 @@ pipeline {
 
     environment {
         TAG_NAME = "build-v1.0.${BUILD_NUMBER}"
+        GITHUB_CREDENTIALS = credentials('github-creds')
+        GITHUB_REPO = "https://${GITHUB_CREDENTIALS_USR}:${GITHUB_CREDENTIALS_PSW}@github.com/saurabh11122001/aws-test.git"
     }
 
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'main', 
-                    url: 'https://github.com/saurabh11122001/aws-test.git',
-                    credentialsId: 'github-creds'
+                git branch: 'main', url: 'https://github.com/saurabh11122001/aws-test.git', credentialsId: 'github-creds'
             }
         }
 
@@ -19,7 +19,7 @@ pipeline {
                 sh "git config user.name 'ci-bot'"
                 sh "git config user.email 'ci-bot@example.com'"
                 sh "git tag ${TAG_NAME}"
-                sh "git push https://saurabh11122001:<your-token>@github.com/saurabh11122001/aws-test.git ${TAG_NAME}"
+                sh "git push ${GITHUB_REPO} ${TAG_NAME}"
             }
         }
     }
