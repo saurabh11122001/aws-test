@@ -23,12 +23,12 @@ pipeline {
                         passwordVariable: 'PASSWORD'
                     )
                 ]) {
-                    sh '''
+                    sh """
                         git config user.name "ci-bot"
                         git config user.email "ci-bot@example.com"
                         git tag $TAG_NAME
                         git push https://$USERNAME:$PASSWORD@github.com/saurabh11122001/aws-test.git $TAG_NAME
-                    '''
+                    """
                 }
             }
         }
