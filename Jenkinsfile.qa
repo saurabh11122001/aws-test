@@ -1,17 +1,14 @@
 pipeline {
   agent any
-
   parameters {
     string(name: 'BUILD_TAG', defaultValue: '', description: 'Tag to deploy')
   }
-
   stages {
     stage('Checkout by Tag') {
       steps {
-        git branch: "${params.BUILD_TAG}", url: 'https://github.com/your-username/your-repo.git'
+        git branch: "${params.BUILD_TAG}", url: 'https://github.com/saurabh11122001/aws-test.git'
       }
     }
-
     stage('Deploy Docker') {
       steps {
         sh 'docker-compose down || true'
@@ -19,7 +16,6 @@ pipeline {
       }
     }
   }
-
   post {
     success {
       echo "QA Environment Deployed!"

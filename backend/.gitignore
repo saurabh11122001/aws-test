@@ -1,2 +1,6 @@
 node_modules
 .env
+
+
+
+ssh -i /c/Users/Saurabh/Downloads/demo.pem ubuntu@3.7.45.118
