@@ -23,20 +23,20 @@ pipeline {
 
     stage('Set ENV & Deploy') {
       steps {
-        dir("${params.APP_TYPE}") {
           script {
             if (params.APP_TYPE == 'backend') {
-              sh 'echo "PORT=5000" > .env'
+              sh 'echo "PORT=5000" > backend/.env'
+
             }
           }
 
-          sh '''
+         sh """
             docker-compose down || true
-            docker-compose up -d --build
-          '''
+            docker-compose up -d --build ${params.APP_TYPE}
+            """
         }
       }
-    }
+
   }
 
   post {
