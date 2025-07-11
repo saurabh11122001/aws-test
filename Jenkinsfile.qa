@@ -14,7 +14,7 @@ pipeline {
           $class: 'GitSCM',
           branches: [[name: "refs/tags/${params.BUILD_TAG}"]],
           userRemoteConfigs: [[
-            url: "https://github.com/your-org/${params.REPO_NAME}.git",
+            url: "https://github.com/saurabh11122001/${params.REPO_NAME}.git",
             credentialsId: 'github-creds'
           ]]
         ])
