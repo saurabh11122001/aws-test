@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     parameters {
-        choice(name: 'REPO_NAME', choices: ['A', 'B', 'C'], description: 'Select the repository')
+        choice(name: 'REPO_NAME', choices: ['aws-test', 'air_quality'], description: 'Select the repository')
     }
 
     environment {

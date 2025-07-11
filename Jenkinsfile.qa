@@ -2,7 +2,7 @@ pipeline {
   agent any
 
   parameters {
-    choice(name: 'REPO_NAME', choices: ['A', 'B', 'C'], description: 'Select the repository')
+    choice(name: 'REPO_NAME', choices: ['aws-test', 'air_quality'], description: 'Select the repository')
     choice(name: 'APP_TYPE', choices: ['frontend', 'backend'], description: 'Select app type to deploy')
     string(name: 'BUILD_TAG', defaultValue: '', description: 'Git tag to deploy')
   }
