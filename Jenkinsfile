@@ -1,16 +1,21 @@
 pipeline {
     agent any
 
+    parameters {
+        choice(name: 'REPO_NAME', choices: ['A', 'B', 'C'], description: 'Select the repository')
+    }
+
     environment {
         TAG_NAME = "build-v1.0.${BUILD_NUMBER}"
-        GIT_REPO = "github.com/saurabh11122001/aws-test.git"
+        GITHUB_USER = "saurabh11122001" // Replace with your GitHub username
+        GIT_REPO = "github.com/${GITHUB_USER}/${params.REPO_NAME}.git"
     }
 
     stages {
         stage('Checkout') {
             steps {
                 git branch: 'main',
-                    url: 'https://github.com/saurabh11122001/aws-test.git',
+                    url: "https://github.com/${GITHUB_USER}/${params.REPO_NAME}.git",
                     credentialsId: 'github-creds'
             }
         }
@@ -21,8 +26,8 @@ pipeline {
                     sh """
                         git config user.name "ci-bot"
                         git config user.email "ci-bot@example.com"
-                        git tag $TAG_NAME
-                        git push https://ci-bot:$TOKEN@$GIT_REPO $TAG_NAME
+                        git tag ${TAG_NAME}
+                        git push https://ci-bot:${TOKEN}@${GIT_REPO} ${TAG_NAME}
                     """
                 }
             }
@@ -31,10 +36,10 @@ pipeline {
 
     post {
         success {
-            echo "✅ Tag $TAG_NAME created and pushed to GitHub!"
+            echo "✅ Tag ${TAG_NAME} created and pushed to ${params.REPO_NAME}!"
         }
         failure {
-            echo "❌ Failed to create or push tag"
+            echo "❌ Failed to create or push tag to ${params.REPO_NAME}"
         }
     }
 }

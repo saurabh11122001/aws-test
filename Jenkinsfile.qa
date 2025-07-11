@@ -1,31 +1,47 @@
 pipeline {
   agent any
+
   parameters {
-    string(name: 'BUILD_TAG', defaultValue: '', description: 'Tag to deploy')
+    choice(name: 'REPO_NAME', choices: ['A', 'B', 'C'], description: 'Select the repository')
+    choice(name: 'APP_TYPE', choices: ['frontend', 'backend'], description: 'Select app type to deploy')
+    string(name: 'BUILD_TAG', defaultValue: '', description: 'Git tag to deploy')
   }
+
   stages {
     stage('Checkout by Tag') {
       steps {
         checkout([
           $class: 'GitSCM',
           branches: [[name: "refs/tags/${params.BUILD_TAG}"]],
-          userRemoteConfigs: [[url: 'https://github.com/saurabh11122001/aws-test.git', credentialsId: 'github-creds']]
+          userRemoteConfigs: [[
+            url: "https://github.com/your-org/${params.REPO_NAME}.git",
+            credentialsId: 'github-creds'
+          ]]
         ])
       }
     }
-    stage('Deploy Docker') {
+
+    stage('Set ENV & Deploy') {
       steps {
-        sh '''
-          echo "PORT=5000" > backend/.env
-          docker-compose down || true
-          docker-compose up -d --build
-        '''
+        dir("${params.APP_TYPE}") {
+          script {
+            if (params.APP_TYPE == 'backend') {
+              sh 'echo "PORT=5000" > .env'
+            }
+          }
+
+          sh '''
+            docker-compose down || true
+            docker-compose up -d --build
+          '''
+        }
       }
     }
   }
+
   post {
     success {
-      echo "✅ QA Environment Deployed!"
+      echo "✅ ${params.REPO_NAME} - ${params.APP_TYPE} deployed successfully using tag ${params.BUILD_TAG}!"
     }
   }
 }
